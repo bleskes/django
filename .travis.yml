@@ -1,0 +1,15 @@
+language: python
+python:
+#  - "2.6"
+  - "2.7"
+#  - "pypy"
+before_install:
+  - export PIP_USE_MIRRORS=true
+  - export PIP_INDEX_URL=https://simple.crate.io/
+install:
+  - pip install -e .
+script:
+  - cd tests && PYTHONPATH=.. ./runtests.py --settings=test_sqlite
+branches:
+  only:
+    - master
