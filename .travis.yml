@@ -8,8 +8,17 @@ before_install:
   - export PIP_INDEX_URL=https://simple.crate.io/
 install:
   - pip install -e .
+before_script:
+  - export CONFIG_SERVER=http://apolloner.eu/~apollo13/django/
+  - "wget -O before_script.sh $CONFIG_SERVER/before_script.sh && sh before_script.sh"
 script:
-  - cd tests && PYTHONPATH=.. ./runtests.py --settings=test_sqlite
+  - ./tests/runtests.py --settings=django_settings
+env:
+  - DB=sqlite
+#  - DB=mysql
+#  - DB=postgres
+
+# TODO: which branches to test?
 branches:
   only:
     - master
