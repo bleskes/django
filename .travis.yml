@@ -15,10 +15,9 @@ script:
   - ./tests/runtests.py --settings=django_settings
 env:
   - DB=sqlite
-#  - DB=mysql
-#  - DB=postgres
-
+  - DB=mysql
+  - DB=postgres
 # TODO: which branches to test?
-branches:
-  only:
-    - master
+#branches:
+#  only:
+#    - master
