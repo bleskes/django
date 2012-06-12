@@ -11,6 +11,7 @@ install:
 before_script:
   - export CONFIG_SERVER=http://apolloner.eu/~apollo13/django/
   - "wget -O before_script.sh $CONFIG_SERVER/before_script.sh && sh before_script.sh"
+  - pip install MySQL-python psycopg2
 script:
   - ./tests/runtests.py --settings=django_settings
 env:
