@@ -18,6 +18,6 @@ env:
   - DB=mysql
   - DB=postgres
 # TODO: which branches to test?
-#branches:
-#  only:
-#    - master
+branches:
+  only:
+    - travisci
