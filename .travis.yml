@@ -22,4 +22,3 @@ env:
 branches:
   only:
     - travisci
-# install markdown pytz and textile docutils and rerun
