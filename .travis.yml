@@ -6,6 +6,7 @@ python:
 before_install:
   - export PIP_USE_MIRRORS=true
   - export PIP_INDEX_URL=https://simple.crate.io/
+  - export DISPLAY=:99.0
 install:
   - pip install -e .
 before_script:
@@ -21,4 +22,3 @@ env:
 branches:
   only:
     - travisci
-# bla
