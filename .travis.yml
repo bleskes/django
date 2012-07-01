@@ -12,11 +12,11 @@ before_script:
   - export CONFIG_SERVER=http://apolloner.eu/~apollo13/django/
   - "wget -O before_script.sh $CONFIG_SERVER/before_script.sh && sh before_script.sh"
 script:
-  - ./tests/runtests.py --settings=django_settings
+  - ./tests/runtests.py --verbosity 2 --settings=django_settings
 env:
   - DB=sqlite
-  - DB=mysql
-  - DB=postgres
+#  - DB=mysql
+#  - DB=postgres
 # TODO: which branches to test?
 branches:
   only:
