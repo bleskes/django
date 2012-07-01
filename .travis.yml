@@ -22,3 +22,4 @@ env:
 branches:
   only:
     - travisci
+# install markdown pytz and textile and rerun.
