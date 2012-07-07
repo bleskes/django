@@ -21,7 +21,7 @@ env:
   - DB=postgres GIS=nogis
   - DB=postgres GIS=gis
 # TODO: which branches to test?
-# travis is on oneiric!
+# travis is on oneiric! fixed postgis?!
 branches:
   only:
     - travisci
