@@ -16,8 +16,8 @@ script:
   - ./tests/runtests.py --verbosity 2 --settings=django_settings
 env:
   - DB=sqlite
-#  - DB=mysql
-#  - DB=postgres
+  - DB=mysql
+  - DB=postgres
 # TODO: which branches to test?
 branches:
   only:
