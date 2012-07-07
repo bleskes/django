@@ -118,6 +118,13 @@ WHEN (new.%(col_name)s IS NULL)
 /""" % locals()
         return sequence_sql, trigger_sql
 
+    def cache_key_culling_sql(self):
+        return """
+            SELECT cache_key
+              FROM (SELECT cache_key, rank() OVER (ORDER BY cache_key) AS rank FROM %s)
+             WHERE rank = %%s + 1
+        """
+
     def date_extract_sql(self, lookup_type, field_name):
         # http://download-east.oracle.com/docs/cd/B10501_01/server.920/a96540/functions42a.htm#1017163
         if lookup_type == 'week_day':
@@ -212,7 +219,7 @@ WHEN (new.%(col_name)s IS NULL)
     def last_executed_query(self, cursor, sql, params):
         # http://cx-oracle.sourceforge.net/html/cursor.html#Cursor.statement
         # The DB API definition does not define this attribute.
-        return cursor.statement
+        return cursor.statement.decode("utf-8")
 
     def last_insert_id(self, cursor, table_name, pk_name):
         sq_name = self._get_sequence_name(table_name)
@@ -479,13 +486,19 @@ class DatabaseWrapper(BaseDatabaseWrapper):
                 del conn_params['use_returning_into']
             self.connection = Database.connect(conn_string, **conn_params)
             cursor = FormatStylePlaceholderCursor(self.connection)
+            # Set the territory first. The territory overrides NLS_DATE_FORMAT
+            # and NLS_TIMESTAMP_FORMAT to the territory default. When all of
+            # these are set in single statement it isn't clear what is supposed
+            # to happen.
+            cursor.execute("ALTER SESSION SET NLS_TERRITORY = 'AMERICA'")
             # Set oracle date to ansi date format.  This only needs to execute
             # once when we create a new connection. We also set the Territory
-            # to 'AMERICA' which forces Sunday to evaluate to a '1' in TO_CHAR().
-            cursor.execute("ALTER SESSION SET NLS_DATE_FORMAT = 'YYYY-MM-DD HH24:MI:SS'"
-                           " NLS_TIMESTAMP_FORMAT = 'YYYY-MM-DD HH24:MI:SS.FF'"
-                           " NLS_TERRITORY = 'AMERICA'"
-                           + (" TIME_ZONE = 'UTC'" if settings.USE_TZ else ''))
+            # to 'AMERICA' which forces Sunday to evaluate to a '1' in
+            # TO_CHAR().
+            cursor.execute(
+                "ALTER SESSION SET NLS_DATE_FORMAT = 'YYYY-MM-DD HH24:MI:SS'"
+                " NLS_TIMESTAMP_FORMAT = 'YYYY-MM-DD HH24:MI:SS.FF'"
+                + (" TIME_ZONE = 'UTC'" if settings.USE_TZ else ''))
 
             if 'operators' not in self.__dict__:
                 # Ticket #14149: Check whether our LIKE implementation will

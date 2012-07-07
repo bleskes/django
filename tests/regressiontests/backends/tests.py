@@ -66,6 +66,18 @@ class OracleChecks(unittest.TestCase):
         self.assertEqual(connection.connection.encoding, "UTF-8")
         self.assertEqual(connection.connection.nencoding, "UTF-8")
 
+    @unittest.skipUnless(connection.vendor == 'oracle',
+                         "No need to check Oracle connection semantics")
+    def test_order_of_nls_parameters(self):
+        # an 'almost right' datetime should work with configured
+        # NLS parameters as per #18465.
+        c = connection.cursor()
+        query = "select 1 from dual where '1936-12-29 00:00' < sysdate"
+        # Test that the query succeeds without errors - pre #18465 this
+        # wasn't the case.
+        c.execute(query)
+        self.assertEqual(c.fetchone()[0], 1)
+
 class MySQLTests(TestCase):
     @unittest.skipUnless(connection.vendor == 'mysql',
                         "Test valid only for MySQL")
@@ -125,35 +137,25 @@ class DateQuotingTest(TestCase):
         classes = models.SchoolClass.objects.filter(last_updated__day=20)
         self.assertEqual(len(classes), 1)
 
+
 class LastExecutedQueryTest(TestCase):
+    @override_settings(DEBUG=True)
+    def test_debug_sql(self):
+        list(models.Tag.objects.filter(name="test"))
+        sql = connection.queries[-1]['sql'].lower()
+        self.assertTrue(sql.startswith("select"))
+        self.assertIn(models.Tag._meta.db_table, sql)
 
-    def setUp(self):
-        # connection.queries will not be filled in without this
-        settings.DEBUG = True
+    def test_query_encoding(self):
+        """
+        Test that last_executed_query() returns an Unicode string
+        """
+        tags = models.Tag.objects.extra(select={'föö':1})
+        sql, params = tags.query.sql_with_params()
+        cursor = tags.query.get_compiler('default').execute_sql(None)
+        last_sql = cursor.db.ops.last_executed_query(cursor, sql, params)
+        self.assertTrue(isinstance(last_sql, unicode))
 
-    def tearDown(self):
-        settings.DEBUG = False
-
-    # There are no tests for the sqlite backend because it does not
-    # implement paramater escaping. See #14091.
-
-    @unittest.skipUnless(connection.vendor in ('oracle', 'postgresql'),
-                         "These backends use the standard parameter escaping rules")
-    def test_parameter_escaping(self):
-        # check that both numbers and string are properly quoted
-        list(models.Tag.objects.filter(name="special:\\\"':", object_id=12))
-        sql = connection.queries[-1]['sql']
-        self.assertTrue("= 'special:\\\"'':' " in sql)
-        self.assertTrue("= 12 " in sql)
-
-    @unittest.skipUnless(connection.vendor == 'mysql',
-                         "MySQL uses backslashes to escape parameters.")
-    def test_parameter_escaping(self):
-        list(models.Tag.objects.filter(name="special:\\\"':", object_id=12))
-        sql = connection.queries[-1]['sql']
-        # only this line is different from the test above
-        self.assertTrue("= 'special:\\\\\\\"\\':' " in sql)
-        self.assertTrue("= 12 " in sql)
 
 class ParameterHandlingTest(TestCase):
     def test_bad_parameter_count(self):
