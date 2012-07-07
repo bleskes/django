@@ -19,6 +19,7 @@ env:
   - DB=mysql
   - DB=postgres
 # TODO: which branches to test?
+# travis hates me?!
 branches:
   only:
     - travisci
