@@ -21,7 +21,7 @@ env:
   - DB=postgres GIS=nogis
   - DB=postgres GIS=gis
 # TODO: which branches to test?
-# travis hates me?!
+# travis hates me!!!!!!!!!!
 branches:
   only:
     - travisci
