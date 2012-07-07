@@ -15,15 +15,11 @@ before_script:
 script:
   - ./tests/runtests.py --verbosity 2 --settings=django_settings
 env:
-  - DB=sqlite
-  - DB=mysql
-  - DB=postgres
-  - GIS=gis
-  - GIS=nogis
-matrix:
-  exclude:
-    - env: DB=sqlite
-      env: GIS=gis
+  - DB=sqlite GIS=nogis
+  - DB=mysql GIS=nogis
+  - DB=mysql GIS=gis
+  - DB=postgres GIS=nogis
+  - DB=postgres GIS=gis
 # TODO: which branches to test?
 # travis hates me?!
 branches:
