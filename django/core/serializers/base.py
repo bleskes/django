@@ -5,7 +5,8 @@ Module for abstract serializer/unserializer base classes.
 from io import BytesIO
 
 from django.db import models
-from django.utils.encoding import smart_unicode
+from django.utils.encoding import smart_text
+from django.utils import six
 
 class SerializerDoesNotExist(KeyError):
     """The requested serializer was not found."""
@@ -123,7 +124,7 @@ class Deserializer(object):
         Init this serializer given a stream or a string
         """
         self.options = options
-        if isinstance(stream_or_string, basestring):
+        if isinstance(stream_or_string, six.string_types):
             self.stream = BytesIO(stream_or_string)
         else:
             self.stream = stream_or_string
@@ -135,9 +136,11 @@ class Deserializer(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         """Iteration iterface -- return the next item in the stream"""
         raise NotImplementedError
+
+    next = __next__             # Python 2 compatibility
 
 class DeserializedObject(object):
     """

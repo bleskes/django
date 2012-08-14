@@ -7,12 +7,12 @@ import hashlib
 import json
 import os
 import shutil
-from StringIO import StringIO
 
 from django.core.files import temp as tempfile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http.multipartparser import MultiPartParser
 from django.test import TestCase, client
+from django.utils.six import StringIO
 from django.utils import unittest
 
 from . import uploadhandler
@@ -87,7 +87,7 @@ class FileUploadTests(TestCase):
         tdir = tempfile.gettempdir()
 
         # This file contains chinese symbols and an accented char in the name.
-        with open(os.path.join(tdir, UNICODE_FILENAME.encode('utf-8')), 'w+b') as file1:
+        with open(os.path.join(tdir, UNICODE_FILENAME), 'w+b') as file1:
             file1.write(b'b' * (2 ** 10))
             file1.seek(0)
 
@@ -362,16 +362,16 @@ class DirectoryCreationTests(unittest.TestCase):
         if not os.path.isdir(temp_storage.location):
             os.makedirs(temp_storage.location)
         if os.path.isdir(UPLOAD_TO):
-            os.chmod(UPLOAD_TO, 0700)
+            os.chmod(UPLOAD_TO, 0o700)
             shutil.rmtree(UPLOAD_TO)
 
     def tearDown(self):
-        os.chmod(temp_storage.location, 0700)
+        os.chmod(temp_storage.location, 0o700)
         shutil.rmtree(temp_storage.location)
 
     def test_readonly_root(self):
         """Permission errors are not swallowed"""
-        os.chmod(temp_storage.location, 0500)
+        os.chmod(temp_storage.location, 0o500)
         try:
             self.obj.testfile.save('foo.txt', SimpleUploadedFile('foo.txt', b'x'))
         except OSError as err:
