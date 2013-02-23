@@ -17,8 +17,7 @@ before_install:
   - "export PIP_INDEX_URL=https://simple.crate.io/"
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
-  # Disable temporarily
-  # - "export MEMCACHE=127.0.0.1:11211"
+  - "export MEMCACHE=127.0.0.1:11211"
 
 install:
   - pip install selenium pytz markdown textile docutils py-bcrypt PyYAML PIL
