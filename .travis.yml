@@ -18,9 +18,6 @@ before_install:
   - "export MEMCACHE=127.0.0.1:11211"
 
 install:
-  # Dependencies from original before_script.sh
-  # http://apolloner.eu/~apollo13/django/before_script.sh
-  - sudo apt-get install -qq build-dep python-imaging
   - pip install selenium pytz markdown textile docutils py-bcrypt PyYAML PIL
 
   # Memcache binding for Python
