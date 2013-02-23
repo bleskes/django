@@ -24,6 +24,7 @@ DATABASES = {
 # Optionally, use memcache during testing - if URL is defined
 from os import environ
 if 'MEMCACHE' in environ:
+    print 'Setting up memcache at %s' % environ['MEMCACHE']
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
