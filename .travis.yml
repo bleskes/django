@@ -20,8 +20,4 @@ env:
   - DB=mysql GIS=gis
   - DB=postgres GIS=nogis
   - DB=postgres GIS=gis
-# TODO: which branches to test?
 # travis is on oneiric! fixed postgis?!
-branches:
-  only:
-    - travisci
