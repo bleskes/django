@@ -14,11 +14,8 @@
 import dj_database_url
 
 DATABASES = {
-    'default': dj_database_url.config(),
-    'other': {
-        # TODO: allow to configure this and add a reference to the advice of making this sqlite.
-        'ENGINE': 'django.db.backends.sqlite3',
-    }
+    'default': dj_database_url.config(env="DEFAULT_DB_URL"),
+    'other': dj_database_url.config(env="OTHER_DB_URL", default="sqlite:///sqlite_other.db")
 }
 
 # Optionally, use memcache during testing - if URL is defined

@@ -8,7 +8,7 @@ python:
 services: memcache
 
 env:
-  - DATABASE_URL=mysql://root@127.0.0.1/django
+  - DEFAULT_DB_URL=mysql://root@127.0.0.1/django
 
 before_install:
   - "export PIP_USE_MIRRORS=true"
