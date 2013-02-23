@@ -162,6 +162,7 @@ associated tests will be skipped.
 .. _gettext: http://www.gnu.org/software/gettext/manual/gettext.html
 .. _selenium: http://pypi.python.org/pypi/selenium
 
+
 Code coverage
 ~~~~~~~~~~~~~
 
@@ -184,6 +185,62 @@ and also excludes several directories not relevant to the results
 
 .. _contrib-apps:
 
+Setting up continuous integration
+---------------------------------
+
+To test django using a continuous integration server, configure your server to setup your choice of database servers.
+You will then need to make sure the ``dj_database_url`` python package is installed on your server. This package
+allows configuring django :setting:`DATABASES` settings based on environment variables.
+
+To communicate to the tests which database & login credentials to use, setup an environment variable called
+DEFAULT_DB_URL, according to following structure::
+
+   export DEFAULT_DB_URL=SCHEME://USERNAME:PASSWORD@SERVER_NAME:PORT/DATABASE_NAME
+
+Where:
+
+* SCHEME - designates the type of database (mysql, postgres, postgis and sqlite are supported).
+* USERNAME, PASSWORD - credentials to use.
+* SERVER_NAME, PORT - location of the database server (typically localhost)
+* DATABASE_NAME - the name of the ``DEFAULT`` database
+
+For example, a typical mysql configuration is::
+
+   export DEFAULT_DB_URL=mysql://root@localhost/django
+
+For in-memory sqlite, use::
+
+   export DEFAULT_DB_URL=sqlite:///
+
+Similarly you can use ``OTHER_DB_URL`` to configure the secondary testing database. If not set, this defaults to sqlite.
+
+When all is set, let your server run the following command to run the tests::
+
+   ./tests/runtests.py --settings=test_ci
+
+Jenkins tips
+~~~~~~~~~~~~
+
+After setting up your Jenkins project, use a Virtualenv builder with the following lines. This will both install the
+dependencies and run the tests::
+
+   pip install psycopg2
+   pip install dj_database_url
+   pip install pytz markdown textile docutils py-bcrypt PyYAML PIL
+   pip install -e .
+   export DEFAULT_DB_URL=$DBA_POSTGRESQL_ADMIN_URI/django
+   ./tests/runtests.py --settings=test_ci
+
+..NOTE: Change the databased configuration as needed.
+
+
+Travis CI
+~~~~~~~~~
+
+
+Django comes with a pre-configured .travis.yml file. It works with https://travis-ci.org/ and should with a local install
+too.
+
 Contrib apps
 ------------
 
@@ -198,3 +255,5 @@ To run tests for just one contrib app (e.g. ``auth``), use the same
 method as above::
 
     ./runtests.py --settings=settings auth
+
+
