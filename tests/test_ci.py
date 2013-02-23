@@ -21,8 +21,19 @@ DATABASES = {
     }
 }
 
+# Optionally, use memcache during testing - if URL is defined
+from os import environ
+if 'MEMCACHE' in environ:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+            'LOCATION': environ['MEMCACHE'],
+        }
+    }
+
+
 SECRET_KEY = "django_tests_secret_key"
-# To speed up tests under SQLite we use the MD5 hasher as the default one. 
+# To speed up tests under SQLite we use the MD5 hasher as the default one.
 # This should not be needed under other databases, as the relative speedup
 # is only marginal there.
 PASSWORD_HASHERS = (

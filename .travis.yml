@@ -5,6 +5,8 @@ python:
   - "2.7"
 #  - "pypy"
 
+services: memcache
+
 env:
   - DB=sqlite GIS=nogis
   - DB=mysql GIS=nogis
@@ -17,12 +19,16 @@ before_install:
   - "export PIP_INDEX_URL=https://simple.crate.io/"
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
+  - "export MEMCACHE=127.0.0.1:11211"
 
 install:
   # Dependencies from original before_script.sh
   # http://apolloner.eu/~apollo13/django/before_script.sh
   - sudo apt-get build-dep python-imaging
   - pip install selenium pytz markdown textile docutils py-bcrypt PyYAML PIL
+
+  # Memcache binding for Python
+  - pip install python-memcached
 
   # Database bindings for Python
   - pip install psycopg2 MySQL-python
