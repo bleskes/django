@@ -43,4 +43,4 @@ before_script:
 
 script:
   # Run the test and be verbose about it
-  - ./tests/runtests.py --verbosity 1 --settings=test_ci test_non_default_cache
+  - ./tests/runtests.py --verbosity 1 --settings=test_ci
