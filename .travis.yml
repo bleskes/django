@@ -10,6 +10,7 @@ services: memcache
 env:
   - DEFAULT_DB_URL=mysql://root@127.0.0.1/django
   - DEFAULT_DB_URL=postgres://postgres@127.0.0.1/django
+  - DEFAULT_DB_URL=sqlite:///
 
 before_install:
   - "export PIP_USE_MIRRORS=true"
