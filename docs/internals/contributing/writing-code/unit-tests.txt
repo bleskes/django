@@ -185,10 +185,13 @@ and also excludes several directories not relevant to the results
 
 .. _contrib-apps:
 
-Setting up continuous integration
+Continuous integration
 ---------------------------------
+While contributing to Django it can be useful to test your code using a continuous integration server. This allows for
+automated testing using a combination of Python versions and databases. Two common platforms for this are Jenkins and
+Travis CI.
 
-To test django using a continuous integration server, configure your server to setup your choice of database servers.
+To test django with a continuous integration server, configure your server to setup your choice of database servers.
 You will then need to make sure the ``dj_database_url`` python package is installed on your server. This package
 allows configuring django :setting:`DATABASES` settings based on environment variables.
 
@@ -218,7 +221,7 @@ When all is set, let your server run the following command to run the tests::
 
    ./tests/runtests.py --settings=test_ci
 
-Jenkins tips
+Jenkins
 ~~~~~~~~~~~~
 
 After setting up your Jenkins project, use a Virtualenv builder with the following lines. This will both install the
@@ -233,13 +236,12 @@ dependencies and run the tests::
 
 ..NOTE: Change the databased configuration as needed.
 
-
 Travis CI
 ~~~~~~~~~
-
-
-Django comes with a pre-configured .travis.yml file. It works with https://travis-ci.org/ and should with a local install
-too.
+`Travis CI <https://travis-ci.org/>`_ is a hosted CI service which is free for Open Source projects. Django comes
+with a pre-configured .travis.yml file. By switching on Travis for your fork of the project on GitHub, any commits you
+push will be automatically tested in all supported Python releases and MySQL, Postgres and SQLite. For using Travis CI,
+no additional configuration is required.
 
 Contrib apps
 ------------
