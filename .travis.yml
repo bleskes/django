@@ -1,23 +1,43 @@
 language: python
+
 python:
 #  - "2.6"
   - "2.7"
 #  - "pypy"
+
+env:
+  - DB=sqlite GIS=nogis
+  - DB=mysql GIS=nogis
+  # - DB=mysql GIS=gis
+  - DB=postgres GIS=nogis
+  # - DB=postgres GIS=gis
+
 before_install:
   - export PIP_USE_MIRRORS=true
   - export PIP_INDEX_URL=https://simple.crate.io/
   - export DISPLAY=:99.0
+
 install:
+  # Dependencies from original before_script.sh
+  # http://apolloner.eu/~apollo13/django/before_script.sh
+  - sudo apt-get build-dep python-imaging
+  - pip install selenium pytz markdown textile docutils py-bcrypt PyYAML PIL
+
+  # Database bindings for Python
+  - pip install psycopg2 MySQL-python
+
+  # Install Django
   - pip install -e .
+
 before_script:
-  - export CONFIG_SERVER=http://apolloner.eu/~apollo13/django/
-  - "wget -O before_script.sh $CONFIG_SERVER/before_script.sh && sh before_script.sh"
+  # MySQL on Travis CI is started on boot, binds to 127.0.0.1 and requires
+  # authentication. You can connect using "root" username and blank password.
+  - mysql -e 'create database django;'
+
+  # PostgreSQL is started on boot, binds to 127.0.0.1 and requires
+  # authentication with "postgres" user and no password.
+  - psql -c 'create database django;' -U postgres
+
 script:
+  # Run the test and be verbose about it
   - ./tests/runtests.py --verbosity 2 --settings=django_settings
-env:
-  - DB=sqlite GIS=nogis
-  - DB=mysql GIS=nogis
-  - DB=mysql GIS=gis
-  - DB=postgres GIS=nogis
-  - DB=postgres GIS=gis
-# travis is on oneiric! fixed postgis?!
